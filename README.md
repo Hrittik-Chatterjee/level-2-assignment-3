@@ -65,9 +65,7 @@ npm run dev
 | PATCH  | `/api/books/:id` | Update a book by ID   |
 | DELETE | `/api/books/:id` | Delete a book by ID   |
 | Get    | `/api/borrow`    | Get borrow summary    |
-
-|
-| POST | `/api/borrow` | Borrow Books
+| POST   | `/api/borrow`    | Borrow Books          |
 
 ---
 
