@@ -7,7 +7,7 @@ import express, {
 } from "express";
 
 import { bookRoutes } from "./app/controllers/books.controller";
-import { borrowRoutes } from "./app/controllers/borrow.cotroller";
+import { borrowRoutes } from "./app/controllers/borrow.controller";
 
 const app: Application = express();
 
