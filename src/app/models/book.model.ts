@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
-import { IBooks } from "../interfaces/book.interface";
+import { BookStaticMethods, IBooks } from "../interfaces/book.interface";
 
-const bookSchema = new Schema<IBooks>(
+const bookSchema = new Schema<IBooks, BookStaticMethods>(
   {
     title: {
       type: String,
@@ -34,8 +34,8 @@ const bookSchema = new Schema<IBooks>(
     },
     copies: {
       type: Number,
-      required: [true, "PLease provide number of copies"],
-      min: [1, "Copies must be positive number"],
+      required: [true, "Please provide number of copies"],
+      min: [0, "Copies must be a positive number"],
     },
     available: {
       type: Boolean,
@@ -47,4 +47,17 @@ const bookSchema = new Schema<IBooks>(
   }
 );
 
-export const Book = model<IBooks>("Book", bookSchema);
+//static method
+bookSchema.static(
+  "calculateCopies",
+  function (currentCopies: number, borrowedCopies: number) {
+    return currentCopies - borrowedCopies;
+  }
+);
+// pre mid
+bookSchema.pre("save", function (next) {
+  this.available = this.copies > 0;
+  next();
+});
+
+export const Book = model<IBooks, BookStaticMethods>("Book", bookSchema);

@@ -14,6 +14,7 @@ const addBookZodSchema = z.object({
   available: z.boolean().optional(),
 });
 
+// Add new book
 bookRoutes.post("/", async (req: Request, res: Response) => {
   const body = await addBookZodSchema.parseAsync(req.body);
   const book = await Book.create(body);
@@ -25,65 +26,63 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
   });
 });
 
+//get all books
 bookRoutes.get("/", async (req: Request, res: Response) => {
-  const books = await Book.find();
+  const filterByGenre = req.query.filter;
+  const sortOrder = req.query.sort === "desc" ? -1 : 1;
+  const bookLimit = parseInt(req.query.limit as string) || 10;
+  const sortBy = (req.query.sortBy as string) || "title";
+
+  let books = [];
+  if (filterByGenre) {
+    books = await Book.find({ genre: filterByGenre })
+      .sort({ [sortBy]: sortOrder })
+      .limit(bookLimit);
+  } else {
+    books = await Book.find()
+      .sort({ [sortBy]: sortOrder })
+      .limit(bookLimit);
+  }
+
   res.status(201).json({
     success: true,
-    message: "Book get successfuly",
-    books,
+    message: "Books retrieved successfully",
+    data: books,
   });
 });
 
-bookRoutes.get("/", async (req: Request, res: Response) => {
-  try {
-    const books = await Book.find();
+// get single book
+bookRoutes.get("/:bookId", async (req: Request, res: Response) => {
+  const bookId = req.params.bookId;
+  const book = await Book.findById(bookId);
 
-    res.status(200).json({
-      success: true,
-      message: "Books fetched successfully",
-      books,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to fetch books",
-      error,
-    });
-  }
+  res.status(201).json({
+    success: true,
+    message: "Book retrieved successfully",
+    data: book,
+  });
 });
 
-// bookRoutes.get('/:noteId', async (req: Request, res: Response) => {
-//     const noteId = req.params.noteId
-//     const note = await Note.findById(noteId)
+//delete book
+bookRoutes.delete("/:bookId", async (req: Request, res: Response) => {
+  const bookId = req.params.bookId;
+  const book = await Book.findByIdAndDelete(bookId);
 
-//     res.status(201).json({
-//         success: true,
-//         message: "Note created successfuly",
-//         note
-//     })
-// })
-// bookRoutes.delete('/:noteId', async (req: Request, res: Response) => {
-//     const noteId = req.params.noteId
-//     const note = await Note.findByIdAndDelete(noteId)
-//     // const note1 = await Note.findOneAndDelete({ _id: noteId })
-//     // const note2 = await Note.deleteOne({ _id: noteId })
+  res.status(201).json({
+    success: true,
+    message: "Book deleted successfully",
+    book,
+  });
+});
+// update book
+bookRoutes.patch("/:bookId", async (req: Request, res: Response) => {
+  const bookId = req.params.bookId;
+  const updatedBody = req.body;
+  const book = await Book.findByIdAndUpdate(bookId, updatedBody, { new: true });
 
-//     res.status(201).json({
-//         success: true,
-//         message: "Note updated successfuly",
-//         note
-//     })
-// })
-// bookRoutes.patch('/:noteId', async (req: Request, res: Response) => {
-//     const noteId = req.params.noteId
-//     const updatedBody = req.body;
-//     const note = await Note.findByIdAndUpdate(noteId, updatedBody, { new: true, })
-//     // const note = await Note.findOneAndUpdate({ _id: noteId }, updatedBody, { new: true, })
-//     // const note = await Note.updateOne({ _id: noteId }, updatedBody, { new: true, })
-
-//     res.status(201).json({
-//         success: true,
-//         message: "Note updated successfuly",
-//         note
-//     })
-// })
+  res.status(201).json({
+    success: true,
+    message: "Book updated successfully",
+    book,
+  });
+});
