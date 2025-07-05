@@ -7,6 +7,7 @@ export const bookRoutes = express.Router();
 const addBookZodSchema = z.object({
   title: z.string(),
   author: z.string(),
+  picture: z.string(),
   genre: z.string(),
   isbn: z.string(),
   description: z.string().optional(),
@@ -28,20 +29,22 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
 
 //get all books
 bookRoutes.get("/", async (req: Request, res: Response) => {
-  const filterByGenre = req.query.filter;
+  const filterByGenre = req.query.filter
+    ? (req.query.filter as string).toUpperCase()
+    : undefined;
   const sortOrder = req.query.sort === "desc" ? -1 : 1;
-  const bookLimit = parseInt(req.query.limit as string) || 10;
+  // const bookLimit = parseInt(req.query.limit as string) || 10;
   const sortBy = (req.query.sortBy as string) || "title";
 
   let books = [];
   if (filterByGenre) {
-    books = await Book.find({ genre: filterByGenre })
-      .sort({ [sortBy]: sortOrder })
-      .limit(bookLimit);
+    books = await Book.find({ genre: filterByGenre }).sort({
+      [sortBy]: sortOrder,
+    });
+    // .limit(bookLimit);
   } else {
-    books = await Book.find()
-      .sort({ [sortBy]: sortOrder })
-      .limit(bookLimit);
+    books = await Book.find().sort({ [sortBy]: sortOrder });
+    // .limit(bookLimit);
   }
 
   res.status(201).json({

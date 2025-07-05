@@ -8,6 +8,7 @@ const borrowSchema = new Schema<IBorrows>(
       required: [true, "Book Id can not be empty"],
       ref: "Book",
     },
+
     quantity: {
       type: Number,
       required: [true, "quantity must be given"],

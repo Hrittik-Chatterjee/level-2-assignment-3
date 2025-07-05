@@ -3,6 +3,7 @@ import { Model } from "mongoose";
 export interface IBooks {
   title: string;
   author: string;
+  picture: string;
   genre:
     | "FICTION"
     | "NON_FICTION"

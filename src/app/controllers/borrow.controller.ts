@@ -9,7 +9,7 @@ export const borrowRoutes = express.Router();
 
 borrowRoutes.post("/", async (req: Request, res: Response) => {
   try {
-    const { book: bookId, quantity, dueDate } = req.body;
+    const { book: bookId, quantity, dueDate, picture } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(bookId)) {
       res.status(400).json({
@@ -40,6 +40,7 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
     // Create the borrow record
     const borrow = await Borrow.create({
       book: book!._id,
+      picture,
       quantity,
       dueDate,
     });
@@ -57,8 +58,7 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
   }
 });
 
-// **borrow details getting **//
-
+// **borrow details getting **/
 borrowRoutes.get("/", async (req: Request, res: Response) => {
   try {
     const summary = await Borrow.aggregate([
@@ -84,6 +84,7 @@ borrowRoutes.get("/", async (req: Request, res: Response) => {
           _id: 0,
           book: {
             title: "$bookDetails.title",
+            picture: "$bookDetails.picture",
             isbn: "$bookDetails.isbn",
           },
           totalQuantity: 1,

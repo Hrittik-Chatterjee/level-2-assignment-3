@@ -12,6 +12,10 @@ const bookSchema = new Schema<IBooks, BookStaticMethods>(
       type: String,
       required: [true, "Author can not be empty"],
     },
+    picture: {
+      type: String,
+      required: [true, "Picture can not be empty"],
+    },
     genre: {
       type: String,
       required: [true, "Please provide a valid genre"],
