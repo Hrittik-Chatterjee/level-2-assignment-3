@@ -15,7 +15,10 @@ const app: Application = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://library-management-jet-sigma.vercel.app"],
+    origin: [
+      "https://library-management-jet-sigma.vercel.app",
+      "http://localhost:5173",
+    ],
   })
 );
 
